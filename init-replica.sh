@@ -1,11 +1,10 @@
 #!/bin/bash
-mongod --replSet rs0 --bind_ip_all --keyFile /etc/mongo-keyfile --auth
 
-echo "Waiting for MongoDB to start..."
-sleep 10
-
+source .env
 echo "Initiating replica set..."
-mongosh --eval "
+
+
+mongosh "mongodb://$MONGO_INITDB_ROOT_USERNAME:$MONGO_INITDB_ROOT_PASSWORD@localhost:27017/" --eval "
   rs.initiate({
     _id: 'rs0',
     members: [
