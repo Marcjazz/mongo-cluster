@@ -6,4 +6,3 @@ WORKDIR /usr/src/app
 
 # Copy the replica set initialization script into the container
 COPY script/ /docker-entrypoint-initdb.d/
-
