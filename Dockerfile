@@ -5,8 +5,5 @@ FROM mongo:8.0
 WORKDIR /usr/src/app
 
 # Copy the replica set initialization script into the container
-COPY init-replica.sh /docker-entrypoint-initdb.d/
-
-# Ensure the initialization script has execution permissions
-RUN chmod +x /docker-entrypoint-initdb.d/init-replica.sh
+COPY script/ /docker-entrypoint-initdb.d/
 

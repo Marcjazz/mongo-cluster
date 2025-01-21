@@ -3,7 +3,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    container_name: mongo1
+    container_name: mongo_rs0
     restart: unless-stopped
     ports:
       - "27017:27017"
@@ -21,7 +21,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    container_name: mongo2
+    container_name: mongo_rs1
     restart: unless-stopped
     ports:
       - "27018:27017"
@@ -38,7 +38,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    container_name: mongo3
+    container_name: mongo_rs2
     restart: unless-stopped
     ports:
       - "27019:27017"
