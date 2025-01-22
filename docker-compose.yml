@@ -26,7 +26,6 @@ services:
     volumes:
       - mongo2_data:/data/db
       - ./mongo-keyfile:/etc/mongo-keyfile:ro
-      - ./scripts/:/docker-entrypoint-initdb.d/
     env_file:
       - .env
     command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/etc/mongo-keyfile", "--auth"]
@@ -42,7 +41,6 @@ services:
     volumes:
       - mongo3_data:/data/db
       - ./mongo-keyfile:/etc/mongo-keyfile:ro
-      - ./scripts/:/docker-entrypoint-initdb.d/
     env_file:
       - .env
     command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/etc/mongo-keyfile", "--auth"]
