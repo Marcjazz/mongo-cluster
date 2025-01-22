@@ -1,8 +1,6 @@
 services:
   mongo1:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+    image: mongo:8.0
     container_name: mongo_rs0
     restart: unless-stopped
     ports:
@@ -11,16 +9,14 @@ services:
       - mongo-cluster
     volumes:
       - mongo1_data:/data/db
-      - ./mongo-keyfile:/etc/mongo-keyfile:ro
-      - ./scripts:/docker-entrypoint-initdb.d
+      - ./mongo-keyfile:/etc/mongo-keyfile
+      - ./scripts/:/docker-entrypoint-initdb.d/
     env_file:
       - .env
-    command: ["--replSet", "rs0", "--bind_ip_all", "--keyFile", "/etc/mongo-keyfile", "--auth"]
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/etc/mongo-keyfile", "--auth"]
 
   mongo2:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+    image: mongo:8.0
     container_name: mongo_rs1
     restart: unless-stopped
     ports:
@@ -29,15 +25,14 @@ services:
       - mongo-cluster
     volumes:
       - mongo2_data:/data/db
-      - ./mongo-keyfile:/etc/mongo-keyfile:ro
+      - ./mongo-keyfile:/etc/mongo-keyfile
+      - ./scripts/:/docker-entrypoint-initdb.d/
     env_file:
       - .env
-    command: ["--replSet", "rs0", "--bind_ip_all", "--keyFile", "/etc/mongo-keyfile", "--auth"]
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/etc/mongo-keyfile", "--auth"]
 
   mongo3:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+    image: mongo:8.0
     container_name: mongo_rs2
     restart: unless-stopped
     ports:
@@ -46,10 +41,11 @@ services:
       - mongo-cluster
     volumes:
       - mongo3_data:/data/db
-      - ./mongo-keyfile:/etc/mongo-keyfile:ro
+      - ./mongo-keyfile:/etc/mongo-keyfile
+      - ./scripts/:/docker-entrypoint-initdb.d/
     env_file:
       - .env
-    command: ["--replSet", "rs0", "--bind_ip_all", "--keyFile", "/etc/mongo-keyfile", "--auth"]
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/etc/mongo-keyfile", "--auth"]
 
   mongo-express:
     image: mongo-express:latest
