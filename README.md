@@ -11,6 +11,15 @@ This guide provides step-by-step instructions to set up a MongoDB replica set us
 
 In the `docker-compose.yml` file, we've defined the services for the MongoDB replica set. It sets up three MongoDB instances (`mongo1`, `mongo2`, and `mongo3`) with replication enabled. Each instance is configured to be part of the `rs0` replica set.
 
+## Generate Mongo Keyfile
+
+Mongo keyfile is used for replica set initilization command as seen in the `docker-compose.yml`. Run the following command at the root of the project:
+
+   ```bash
+   # Generate mongo keyfile for replica set initialization
+   openssl rand -base64 756 > /etc/mongo-keyfile
+   ```
+
 ## Starting the Replica Set
 
 To start the MongoDB replica set:
