@@ -11,15 +11,6 @@ This guide provides step-by-step instructions to set up a MongoDB replica set us
 
 In the `docker-compose.yml` file, we've defined the services for the MongoDB replica set. It sets up three MongoDB instances (`mongo1`, `mongo2`, and `mongo3`) with replication enabled. Each instance is configured to be part of the `rs0` replica set.
 
-## Generate Mongo Keyfile
-
-Mongo keyfile is used for replica set initilization command as seen in the `docker-compose.yml`. Run the following command at the root of the project:
-
-   ```bash
-   # Generate mongo keyfile for replica set initialization
-   openssl rand -base64 756 > /etc/mongo-keyfile
-   ```
-
 ## Starting the Replica Set
 
 To start the MongoDB replica set:
@@ -32,17 +23,7 @@ To start the MongoDB replica set:
 
    This command builds and starts the MongoDB containers in detached mode.
 
-2. **Initialize the Replica Set**: The `initiateReplicaSet.js` script will be executed automatically upon container startup, initializing the replica set. To manuallly initialize the replica set, run:
-    
-    ```bash
-    # Source environment variables
-    source .env
-
-    # Run initialization script against the docker container
-    docker exec mongo1 mongosh "mongodb://$MONGO_INITDB_ROOT_USERNAME:$MONGO_INITDB_ROOT_PASSWORD@mongo1:27017/" --eval 'rs.initiate({ _id: "rs0", members: [ { _id: 0, host: "mongo1:27017" }, { _id: 1, host: "mongo2:27017" }, { _id: 2, host: "mongo3:27017" } ] })'
-    ```
-
-This script initiates the replica set with the specified members.
+2. **Initialize the Replica Set**: The `initiate-replica-set.sh` script will be executed automatically upon container startup, initializing the replica set. This script initiates the replica set with the specified members.
 
 
 ## Verifying the Replica Set

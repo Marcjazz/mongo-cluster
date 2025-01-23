@@ -9,8 +9,6 @@ services:
       - mongo-cluster
     volumes:
       - mongo1_data:/data/db
-      - ./mongo-keyfile:/etc/mongo-keyfile:ro
-      - ./scripts/:/docker-entrypoint-initdb.d/
     env_file:
       - .env
 
@@ -24,7 +22,6 @@ services:
       - mongo-cluster
     volumes:
       - mongo2_data:/data/db
-      - ./mongo-keyfile:/etc/mongo-keyfile:ro
     env_file:
       - .env
 
@@ -38,7 +35,6 @@ services:
       - mongo-cluster
     volumes:
       - mongo3_data:/data/db
-      - ./mongo-keyfile:/etc/mongo-keyfile:ro
     env_file:
       - .env
 
