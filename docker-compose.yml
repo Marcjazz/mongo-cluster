@@ -1,6 +1,6 @@
 services:
   mongo1:
-    image: mongo:8.0
+    build: .
     container_name: mongo_rs0
     restart: unless-stopped
     ports:
@@ -13,10 +13,9 @@ services:
       - ./scripts/:/docker-entrypoint-initdb.d/
     env_file:
       - .env
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/etc/mongo-keyfile", "--auth"]
 
   mongo2:
-    image: mongo:8.0
+    build: .
     container_name: mongo_rs1
     restart: unless-stopped
     ports:
@@ -28,10 +27,9 @@ services:
       - ./mongo-keyfile:/etc/mongo-keyfile:ro
     env_file:
       - .env
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/etc/mongo-keyfile", "--auth"]
 
   mongo3:
-    image: mongo:8.0
+    build: .
     container_name: mongo_rs2
     restart: unless-stopped
     ports:
@@ -43,7 +41,6 @@ services:
       - ./mongo-keyfile:/etc/mongo-keyfile:ro
     env_file:
       - .env
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/etc/mongo-keyfile", "--auth"]
 
   mongo-express:
     image: mongo-express:latest
