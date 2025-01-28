@@ -1,52 +1,57 @@
 services:
   mongo1:
-    image: mongo:6.0
+    image: mongo:8.0
     container_name: mongo1
     restart: unless-stopped
-    command: >
-      mongod --replSet rs0
-             --tlsMode requireTLS
-             --tlsCertificateKeyFile /etc/mongo/ssl/mongo.pem
-             --tlsCAFile /etc/mongo/ssl/ca.pem
-             --clusterAuthMode x509 && \
-      mongosh mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0&tls=true&tlsCAFile=/etc/mongo/ssl/ca.crt&tlsCertificateKeyFile=/etc/mongo/ssl/mongo-key.pem
-
-    volumes:
-      - ./certs/ca.pem:/etc/mongo/ssl/ca.pem:ro
-      - ./certs/mongo1/mongo.pem:/etc/mongo/ssl/mongo.pem:ro
-      - ./certs/mongo1/mongo-key.pem:/etc/mongo/ssl/mongo-key.pem:ro
     ports:
       - "27017:27017"
+    env_file:
+      - .env
+    command: >
+      mongod --replSet rs0
+             --tlsMode requireTLS
+             --tlsCertificateKeyFile /etc/ssl/mongo/mongo1.pem
+             --tlsCAFile /etc/ssl/mongo/ca.crt
+             --clusterAuthMode x509
+    volumes:
+      - ./certs/ca.crt:/etc/ssl/mongo/ca.crt:ro
+      - ./certs/mongo1/mongo.pem:/etc/ssl/mongo/mongo1.pem:ro
 
   mongo2:
-    image: mongo:6.0
+    image: mongo:8.0
     container_name: mongo2
     restart: unless-stopped
+    ports:
+      - "27018:27017"
+    env_file:
+      - .env
     command: >
       mongod --replSet rs0
              --tlsMode requireTLS
-             --tlsCertificateKeyFile /etc/mongo/ssl/mongo.pem
-             --tlsCAFile /etc/mongo/ssl/ca.pem
+             --tlsCertificateKeyFile /etc/ssl/mongo/mongo2.pem
+             --tlsCAFile /etc/ssl/mongo/ca.crt
              --clusterAuthMode x509
     volumes:
-      - ./certs/ca.pem:/etc/mongo/ssl/ca.pem:ro
-      - ./certs/mongo2/mongo.pem:/etc/mongo/ssl/mongo.pem:ro
-      - ./certs/mongo2/mongo-key.pem:/etc/mongo/ssl/mongo-key.pem:ro
+      - ./certs/ca.crt:/etc/ssl/mongo/ca.crt:ro
+      - ./certs/mongo2/mongo.pem:/etc/ssl/mongo/mongo2.pem:ro
 
   mongo3:
-    image: mongo:6.0
+    image: mongo:8.0
     container_name: mongo3
     restart: unless-stopped
+    ports:
+      - "27019:27017"
+    env_file:
+      - .env
     command: >
       mongod --replSet rs0
              --tlsMode requireTLS
-             --tlsCertificateKeyFile /etc/mongo/ssl/mongo.pem
-             --tlsCAFile /etc/mongo/ssl/ca.pem
+             --tlsCertificateKeyFile /etc/ssl/mongo/mongo3.pem
+             --tlsCAFile /etc/ssl/mongo/ca.crt
              --clusterAuthMode x509
     volumes:
-      - ./certs/ca.pem:/etc/mongo/ssl/ca.pem:ro
-      - ./certs/mongo3/mongo.pem:/etc/mongo/ssl/mongo.pem:ro
-      - ./certs/mongo3/mongo-key.pem:/etc/mongo/ssl/mongo-key.pem:ro
+      - ./certs/ca.crt:/etc/ssl/mongo/ca.crt:ro
+      - ./certs/mongo3/mongo.pem:/etc/ssl/mongo/mongo3.pem:ro
 
   mongo-express:
     image: mongo-express:latest
@@ -55,14 +60,8 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - ME_CONFIG_MONGODB_SERVER=mongo1,mongo2,mongo3
-      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
-      - ME_CONFIG_OPTIONS_SSL=true
-      - ME_CONFIG_MONGODB_SSLVALIDATE=false
-      - ME_CONFIG_MONGODB_SSLCA=/etc/mongo/ssl/ca.pem
-      - ME_CONFIG_MONGODB_SSLKEY=/etc/mongo/ssl/mongo-key.pem
-      - ME_CONFIG_MONGODB_SSLCERT=/etc/mongo/ssl/mongo.pem
+      - ME_CONFIG_MONGODB_URL=mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0&tls=true&tlsCAFile=/etc/ssl/mongo/ca.crt&tlsCertificateKeyFile=/etc/ssl/mongo/mongo-express.pem
+
     volumes:
-      - ./certs/ca.pem:/etc/mongo/ssl/ca.pem:ro
-      - ./certs/mongo-express/mongo.pem:/etc/mongo/ssl/mongo.pem:ro
-      - ./certs/mongo-express/mongo-key.pem:/etc/mongo/ssl/mongo-key.pem:ro
+      - ./certs/ca.crt:/etc/ssl/mongo/ca.crt:ro
+      - ./certs/mongo-express/mongo.pem:/etc/ssl/mongo/mongo-express.pem:ro

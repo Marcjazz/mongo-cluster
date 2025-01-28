@@ -38,7 +38,7 @@ generate_cert() {
     -days 365 -sha256
 
   # Combine the instance key and certificate into a single PEM file
-  cat "$CERTS_DIR/$INSTANCE/mongo.key" "$CERTS_DIR/$INSTANCE/mongo.crt" > "$CERTS_DIR/$INSTANCE/mongo-key.pem"
+  cat "$CERTS_DIR/$INSTANCE/mongo.key" "$CERTS_DIR/$INSTANCE/mongo.crt" > "$CERTS_DIR/$INSTANCE/mongo.pem"
 
   echo "Certificate for $INSTANCE generated."
 }
