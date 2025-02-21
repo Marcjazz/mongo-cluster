@@ -27,12 +27,14 @@ jobs:
     - name: Install Make
       run: sudo apt-get install make  # Install Make if not already installed
 
+    - name: Create .env file
+      run: |
+        echo "MONGO_INITDB_DATABASE=hublotsdb" >> .env
+        echo "ME_CONFIG_MONGODB_URL=mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0" >> .env
+        echo "ME_CONFIG_BASICAUTH_USERNAME=admin" >> .env
+        echo "ME_CONFIG_BASICAUTH_PASSWORD=admin" >> .env
+
     - name: Start MongoDB Cluster
-      env:
-        MONGO_INITDB_DATABASE: mydb
-        ME_CONFIG_MONGODB_URL: mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0
-        ME_CONFIG_BASICAUTH_USERNAME: admin
-        ME_CONFIG_BASICAUTH_PASSWORD: admin
       run: |
         make start  # Use Makefile to start the services and initialize the MongoDB replica set
 
