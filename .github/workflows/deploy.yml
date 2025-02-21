@@ -48,8 +48,12 @@ jobs:
 
     - name: Check Mongo Express
       run: |
+        # Show express server logs    
+        docker logs mongo-express
+        
         # Make sure Mongo Express is running
-        curl http://localhost:8081
+        source .env
+        curl -u "${ME_CONFIG_BASICAUTH_USERNAME}:${ME_CONFIG_BASICAUTH_PASSWORD}" http://localhost:8081
 
     - name: Tear down Docker Compose
       run: |
