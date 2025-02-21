@@ -11,7 +11,7 @@ up:
 
 # Target to initialize MongoDB replica set
 init-replica:
-	docker exec -it $(MONGO_CONTAINER) mongosh --eval $(INITIATE_CMD)  # Initialize MongoDB replica set
+	docker exec $(MONGO_CONTAINER) mongosh --eval $(INITIATE_CMD)  # Initialize MongoDB replica set
 
 # Target to bring down the services and clean up
 down:
@@ -19,7 +19,7 @@ down:
 
 # Target to check MongoDB replica set status
 check-status:
-	docker exec -it $(MONGO_CONTAINER) mongosh --eval 'rs.status()'  # Check the replica set status
+	docker exec $(MONGO_CONTAINER) mongosh --eval 'rs.status()'  # Check the replica set status
 
 # Combined target to start services and initialize the replica set
 start:
