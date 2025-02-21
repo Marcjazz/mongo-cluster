@@ -3,12 +3,10 @@ services:
     image: mongo:8.0
     container_name: mongo1
     restart: unless-stopped
-    ports:
-      - "27017:27017"
     env_file:
       - .env
     command: >
-      mongod  --port 27017 --replSet rs0
+      mongod  --replSet rs0 --bind_ip 0.0.0.0
     networks:
       - mongo-cluster
 
@@ -16,12 +14,10 @@ services:
     image: mongo:8.0
     container_name: mongo2
     restart: unless-stopped
-    ports:
-      - "27018:27018"
     env_file:
       - .env
     command: >
-      mongod  --port 27018 --replSet rs0
+      mongod  --replSet rs0 --bind_ip 0.0.0.0
     networks:
       - mongo-cluster
 
@@ -29,12 +25,10 @@ services:
     image: mongo:8.0
     container_name: mongo3
     restart: unless-stopped
-    ports:
-      - "27019:27019"
     env_file:
       - .env
     command: >
-      mongod  --port 27019 --replSet rs0
+      mongod  --replSet rs0 --bind_ip 0.0.0.0
     networks:
       - mongo-cluster
 
