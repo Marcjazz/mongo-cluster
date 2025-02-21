@@ -48,8 +48,9 @@ jobs:
 
     - name: Check Mongo Express
       run: |
-        # Show express server logs    
-        sleep 10 && docker logs mongo-express # Waiting for server to connect to mongo cluster
+        echo Sleeping for 15 secs...    
+        sleep 15
+        docker logs mongo-express
 
         # Make sure Mongo Express is running
         source .env
