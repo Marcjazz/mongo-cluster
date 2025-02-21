@@ -1,4 +1,4 @@
-name: CD
+name: Test Private Cluster Setup
 
 on:
   push:
@@ -6,36 +6,49 @@ on:
       - master
 
 jobs:
-  deploy:
-    runs-on: ubuntu-22.04
-
-    permissions:
-      contents: read # Allows reading repository content
-      packages: write # Allows publishing packages to GHCR
+  test:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Cache Docker layers
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+    
+    - name: Install Make
+      run: sudo apt-get install make  # Install Make if not already installed
 
-      - name: Export Normalized Tag
-        run: |
-          echo "NORMALIZED_TAG=$(echo "ghcr.io/${{ github.repository }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-  
-      - name: Build and Push Image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ env.NORMALIZED_TAG }}:latest
-            ${{ env.NORMALIZED_TAG }}:${{ github.run_number }}
+    - name: Start MongoDB Cluster
+      env:
+        MONGO_INITDB_DATABASE: mydb
+        ME_CONFIG_MONGODB_URL: mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0
+        ME_CONFIG_BASICAUTH_USERNAME: admin
+        ME_CONFIG_BASICAUTH_PASSWORD: admin
+      run: |
+        make start  # Use Makefile to start the services and initialize the MongoDB replica set
+
+    - name: Verify MongoDB is Running
+      run: |
+        docker ps | grep mongo || exit 1
+
+    - name: Check MongoDB Replica Set
+      run: |
+        make check-status || exit 1
+
+    - name: Check Mongo Express
+      run: |
+        # Make sure Mongo Express is running
+        curl http://localhost:8081
+
+    - name: Tear down Docker Compose
+      run: |
+        make down  # Use Makefile to stop and remove containers
