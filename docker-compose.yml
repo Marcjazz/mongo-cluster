@@ -8,50 +8,35 @@ services:
     env_file:
       - .env
     command: >
-      mongod --replSet rs0
-             --tlsMode requireTLS
-             --tlsCertificateKeyFile /etc/ssl/mongo/mongo1.pem
-             --tlsCAFile /etc/ssl/mongo/ca.crt
-             --clusterAuthMode x509
-    volumes:
-      - ./certs/ca.crt:/etc/ssl/mongo/ca.crt:ro
-      - ./certs/mongo1/mongo.pem:/etc/ssl/mongo/mongo1.pem:ro
+      mongod  --port 27017 --replSet rs0
+    networks:
+      - mongo-cluster
 
   mongo2:
     image: mongo:8.0
     container_name: mongo2
     restart: unless-stopped
     ports:
-      - "27018:27017"
+      - "27018:27018"
     env_file:
       - .env
     command: >
-      mongod --replSet rs0
-             --tlsMode requireTLS
-             --tlsCertificateKeyFile /etc/ssl/mongo/mongo2.pem
-             --tlsCAFile /etc/ssl/mongo/ca.crt
-             --clusterAuthMode x509
-    volumes:
-      - ./certs/ca.crt:/etc/ssl/mongo/ca.crt:ro
-      - ./certs/mongo2/mongo.pem:/etc/ssl/mongo/mongo2.pem:ro
+      mongod  --port 27018 --replSet rs0
+    networks:
+      - mongo-cluster
 
   mongo3:
     image: mongo:8.0
     container_name: mongo3
     restart: unless-stopped
     ports:
-      - "27019:27017"
+      - "27019:27019"
     env_file:
       - .env
     command: >
-      mongod --replSet rs0
-             --tlsMode requireTLS
-             --tlsCertificateKeyFile /etc/ssl/mongo/mongo3.pem
-             --tlsCAFile /etc/ssl/mongo/ca.crt
-             --clusterAuthMode x509
-    volumes:
-      - ./certs/ca.crt:/etc/ssl/mongo/ca.crt:ro
-      - ./certs/mongo3/mongo.pem:/etc/ssl/mongo/mongo3.pem:ro
+      mongod  --port 27019 --replSet rs0
+    networks:
+      - mongo-cluster
 
   mongo-express:
     image: mongo-express:latest
@@ -59,9 +44,15 @@ services:
     restart: unless-stopped
     ports:
       - "8081:8081"
-    environment:
-      - ME_CONFIG_MONGODB_URL=mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0&tls=true&tlsCAFile=/etc/ssl/mongo/ca.crt&tlsCertificateKeyFile=/etc/ssl/mongo/mongo-express.pem
+    networks:
+      - mongo-cluster
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
+    env_file:
+      - .env
 
-    volumes:
-      - ./certs/ca.crt:/etc/ssl/mongo/ca.crt:ro
-      - ./certs/mongo-express/mongo.pem:/etc/ssl/mongo/mongo-express.pem:ro
+networks:
+  mongo-cluster:
+    driver: bridge

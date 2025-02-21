@@ -23,7 +23,13 @@ To start the MongoDB replica set:
 
    This command builds and starts the MongoDB containers in detached mode.
 
-2. **Initialize the Replica Set**: The `initiate-replica-set.sh` script will be executed automatically upon container startup, initializing the replica set. This script initiates the replica set with the specified members.
+2. **Initialize the Replica Set**:
+Initiates the replica set with the specified members.
+
+   ```bash
+   docker exec -it mongo1 mongosh --eval 'rs.initiate({ _id: "rs0", members: [ { _id: 0, host: "mongo1:27017" }, { _id: 1, host: "mongo2:
+27018" }, { _id: 2, host: "mongo3:27019" } ] })'
+   ```
 
 
 ## Verifying the Replica Set
@@ -33,13 +39,7 @@ To verify that the replica set is functioning correctly:
 1. **Access the Mongo Shell**: Connect to the primary MongoDB instance:
 
    ```bash
-   docker exec -it mongo1 mongosh -u admin -p adminpassword --authenticationDatabase admin
-   ```
-
-2. **Check Replica Set Status**: In the Mongo shell, run:
-
-   ```javascript
-   rs.status();
+   docker exec -it mongo1 mongosh --eval 'rs.status()'
    ```
 
    This command displays the current status of the replica set, including information about each member.
