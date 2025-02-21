@@ -17,7 +17,7 @@ jobs:
       uses: docker/setup-buildx-action@v1
 
     - name: Cache Docker layers
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: /tmp/.buildx-cache
         key: ${{ runner.os }}-buildx-${{ github.sha }}
@@ -29,7 +29,7 @@ jobs:
 
     - name: Create .env file
       run: |
-        echo "MONGO_INITDB_DATABASE=hublotsdb" >> .env
+        echo "MONGO_INITDB_DATABASE=mydb" >> .env
         echo "ME_CONFIG_MONGODB_URL=mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0" >> .env
         echo "ME_CONFIG_BASICAUTH_USERNAME=admin" >> .env
         echo "ME_CONFIG_BASICAUTH_PASSWORD=admin" >> .env
@@ -49,8 +49,9 @@ jobs:
     - name: Check Mongo Express
       run: |
         # Show express server logs    
+        sleep 10 # Waiting for server to connect to mongo cluster
         docker logs mongo-express
-        
+
         # Make sure Mongo Express is running
         source .env
         curl -u "${ME_CONFIG_BASICAUTH_USERNAME}:${ME_CONFIG_BASICAUTH_PASSWORD}" http://localhost:8081
