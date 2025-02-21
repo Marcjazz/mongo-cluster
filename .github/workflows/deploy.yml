@@ -11,10 +11,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      uses: docker/setup-buildx-action@v3
 
     - name: Cache Docker layers
       uses: actions/cache@v4
@@ -49,11 +49,11 @@ jobs:
     - name: Check Mongo Express
       run: |
         # Show express server logs    
-        sleep 5 && docker logs mongo-express # Waiting for server to connect to mongo cluster
+        sleep 10 && docker logs mongo-express # Waiting for server to connect to mongo cluster
 
         # Make sure Mongo Express is running
         source .env
-        curl -u "${ME_CONFIG_BASICAUTH_USERNAME}:${ME_CONFIG_BASICAUTH_PASSWORD}" http://localhost:8081
+        curl -u "${ME_CONFIG_BASICAUTH_USERNAME}:${ME_CONFIG_BASICAUTH_PASSWORD}" -o /dev/null -w '%{http_code}' http://localhost:8081
 
     - name: Tear down Docker Compose
       run: |
